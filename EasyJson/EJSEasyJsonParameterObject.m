@@ -6,8 +6,8 @@
 //  Copyright (c) 2014 EJS. All rights reserved.
 //
 
-#import "EJSEasyJsonValueObject.h"
+#import "EJSEasyJsonParameterObject.h"
 
-@implementation EJSEasyJsonValueObject
+@implementation EJSEasyJsonParameterObject
 
 @end

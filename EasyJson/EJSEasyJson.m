@@ -9,7 +9,7 @@
 #import "EJSEasyJson.h"
 #import "EJSEasyJsonClassObject.h"
 #import "EJSEasyJsonObject.h"
-#import "EJSEasyJsonValueObject.h"
+#import "EJSEasyJsonParameterObject.h"
 
 #define DATE_FORMAT @"yyyy-MM-dd"
 
@@ -30,7 +30,6 @@
 
 static EJSEasyJson __strong *sharedInstance = nil;
 
-
 #pragma mark - Init
 
 +(EJSEasyJson *)sharedInstance
@@ -47,17 +46,7 @@ static EJSEasyJson __strong *sharedInstance = nil;
     self = [super init];
     if (self != nil)
     {
-        easyJsonConfig = [[NSMutableArray alloc]init];
-        NSString *configFilepath = [[NSBundle mainBundle] pathForResource:@"EasyJsonConfig" ofType:@"json"];
-        
-        if (configFilepath) {
-            NSData *configContent = [NSData dataWithContentsOfFile:configFilepath];
-            [easyJsonConfig setArray: [self getConfigFromData:configContent]];
-        }
-        
-        if (configFilepath == nil){
-            // Log error
-        }
+        easyJsonConfig = [[NSMutableArray alloc]initWithArray:[self readConfigFile]];
 
         dateFormater = [[NSDateFormatter alloc] init];
         [dateFormater setDateFormat:DATE_FORMAT];
@@ -86,100 +75,133 @@ static EJSEasyJson __strong *sharedInstance = nil;
 
 - (id)analyzeDictionary:(NSDictionary *)jsonDictionary forClass:(id)objectClass
 {
-    // Config Object
+    // Config Object linked to the json dictionary
     EJSEasyJsonObject *configObject = [self getConfigForClass:NSStringFromClass(objectClass)];
     
-    // JSON
-    NSDictionary *jsonValues = [jsonDictionary objectForKey:configObject.classDetail.json];
+    // JSON values
+    NSDictionary *jsonValues = [jsonDictionary objectForKey:configObject.classInfo.jsonKey];
     
     // 1 Nsmanagedobject
-    NSManagedObject *managedObject = [NSEntityDescription insertNewObjectForEntityForName:configObject.classDetail.attribute inManagedObjectContext:[EJSDatabaseManager sharedInstance].databaseCore.managedObjectContext];
+    NSManagedObject *managedObject = [NSEntityDescription insertNewObjectForEntityForName:configObject.classInfo.attribute inManagedObjectContext:[EJSDatabaseManager sharedInstance].databaseCore.managedObjectContext];
     
-    for (EJSEasyJsonValueObject *value in configObject.values) {
+    for (EJSEasyJsonParameterObject *parameter in configObject.parameters) {
+        id managedObjectValue = [self setParameterForValueObject:parameter withJsonDict:jsonValues withManagedObject:managedObject];
+        if ((managedObjectValue) && (![managedObjectValue isKindOfClass:[NSSet class]]))
+           [managedObject setValue:managedObjectValue forKey:parameter.attribute];
+        else if ((managedObjectValue) && ([managedObjectValue isKindOfClass:[NSSet class]]))
+        {
+//            NSMutableSet *reports = [managedObject mutableSetValueForKey:parameter.attribute];
+//            for (id object in managedObjectValue) {
+//                [reports addObject:object];
+//            }
+            // TODO : Inverse ?
+            [managedObject setValue:managedObjectValue forKey:parameter.attribute];
+        }
         
-        id managedObjectValue = [self setParameterForValueObject:value withJsonDict:jsonValues withManagedObject:managedObject];
-        if (managedObjectValue)
-           [managedObject setValue:managedObjectValue forKey:value.attribute];
     }
     return managedObject;
 }
 
 
 
-- (id)setParameterForValueObject:(EJSEasyJsonValueObject *)valueObject withJsonDict:(NSDictionary *)jsonDict withManagedObject:(NSManagedObject *)managedObject
+- (id)setParameterForValueObject:(EJSEasyJsonParameterObject *)valueObject withJsonDict:(NSDictionary *)jsonDict withManagedObject:(NSManagedObject *)managedObject
 {
-    if ([self checkIfKey:valueObject.json ExistIn:jsonDict]) {
-        NSString *jsonString = [jsonDict objectForKey:valueObject.json];
-        
-        NSEntityDescription *entityDescription = [managedObject entity];
+    if ([self checkIfKey:valueObject.jsonKey ExistIn:jsonDict]) {
         
         // Search attribute
-        NSAttributeDescription *attributeDescription;
-        for (NSString *attributeKey in [[entityDescription attributesByName] allKeys]) {
-           if ([attributeKey isEqual:valueObject.attribute])
-           {
-               attributeDescription = [[entityDescription attributesByName] objectForKey:attributeKey];
-           }
+        NSEntityDescription *entityDescription = [managedObject entity];
+        
+        id propertyDescription;
+        for (NSString *propertyKey in [[entityDescription propertiesByName] allKeys]) {
+            if ([propertyKey isEqual:valueObject.attribute]) {
+                propertyDescription = [[entityDescription propertiesByName] objectForKey:propertyKey];
+            }
         }
-        switch (attributeDescription.attributeType) {
-            case NSInteger16AttributeType:
-            case NSInteger32AttributeType:
-            case NSInteger64AttributeType:
-            {
-                return NSNumWithInt([jsonString intValue]);
-                break;
-            }
-            case NSDecimalAttributeType:
-            {
-                return NSNumWithFloat([jsonString floatValue]);
-                break;
-            }
-            case NSDoubleAttributeType:
-            {
-                return NSNumWithDouble([jsonString doubleValue]);
-                break;
-            }
-            case NSFloatAttributeType:
-            {
-                return NSNumWithFloat([jsonString floatValue]);
-                break;
-            }
-            case NSStringAttributeType:
-            {
-                return jsonString;
-                break;
-            }
-            case NSBooleanAttributeType:
-            {
-                return NSNumWithBool([jsonString boolValue]);
-                break;
-            }
-            case NSDateAttributeType:
-            {
-                return [dateFormater dateFromString:jsonString];
-                break;
-            }
-            case NSBinaryDataAttributeType:
-            {
-                
-                break;
-            }
-            case NSTransformableAttributeType:
-            {
-                
-                break;
-            }
-            case NSObjectIDAttributeType:
-            {
-                
-                break;
-            }
-            default:
-                break;
+        
+        if ([propertyDescription isKindOfClass:[NSAttributeDescription class]]) {
+            NSString *jsonString = [jsonDict objectForKey:valueObject.jsonKey];
+            return [self returnFormatedAttributeValue:propertyDescription withJson:jsonString];
+        } else if ([propertyDescription isKindOfClass:[NSRelationshipDescription class]]) {
+            NSArray *jsonArray = [jsonDict objectForKey:valueObject.jsonKey];
+            return [NSSet setWithSet:[self returnSetForRelationship:propertyDescription withJson:jsonArray]];
         }
     }
     return nil;
 }
+
+- (id)returnFormatedAttributeValue:(NSAttributeDescription *)attributeDescription withJson:(NSString *)jsonString
+{
+    // Return correct value depending of the type
+    switch (attributeDescription.attributeType) {
+        case NSInteger16AttributeType:
+        case NSInteger32AttributeType:
+        case NSInteger64AttributeType:
+        {
+            return NSNumWithInt([jsonString intValue]);
+            break;
+        }
+        case NSDecimalAttributeType:
+        {
+            return NSNumWithFloat([jsonString floatValue]);
+            break;
+        }
+        case NSDoubleAttributeType:
+        {
+            return NSNumWithDouble([jsonString doubleValue]);
+            break;
+        }
+        case NSFloatAttributeType:
+        {
+            return NSNumWithFloat([jsonString floatValue]);
+            break;
+        }
+        case NSStringAttributeType:
+        {
+            return jsonString;
+            break;
+        }
+        case NSBooleanAttributeType:
+        {
+            return NSNumWithBool([jsonString boolValue]);
+            break;
+        }
+        case NSDateAttributeType:
+        {
+            return [dateFormater dateFromString:jsonString];
+            break;
+        }
+        case NSBinaryDataAttributeType:
+        {
+            
+            break;
+        }
+        case NSTransformableAttributeType:
+        {
+            
+            break;
+        }
+        case NSObjectIDAttributeType:
+        {
+            
+            break;
+        }
+        default:
+            break;
+    }
+    return nil;
+}
+
+- (NSSet *)returnSetForRelationship:(NSRelationshipDescription *)relationship withJson:(NSArray *)jsonArray
+{
+    NSMutableSet *set = [NSMutableSet set];
+    for (NSDictionary *jsonDict in jsonArray) {
+        [set addObject:[self analyzeDictionary:jsonDict forClass:NSClassFromString([[relationship destinationEntity] managedObjectClassName])]];
+    }
+    return [NSSet setWithSet:set];
+}
+
+
+#pragma mark - Helper
 
 - (BOOL)checkIfKey:(NSString *)key ExistIn:(NSDictionary *)dict
 {
@@ -196,11 +218,22 @@ static EJSEasyJson __strong *sharedInstance = nil;
 - (EJSEasyJsonObject *)getConfigForClass:(NSString *)className
 {
     for (EJSEasyJsonObject *ejsJsonObject in easyJsonConfig) {
-        if ([className isEqual:ejsJsonObject.classDetail.attribute]) {
+        if ([className isEqual:ejsJsonObject.classInfo.attribute]) {
             return ejsJsonObject;
         }
     }
     return nil;
+}
+
+- (NSArray *)readConfigFile
+{
+    NSString *configFilepath = [[NSBundle mainBundle] pathForResource:@"EasyJsonConfig" ofType:@"json"];
+    
+    if (configFilepath) {
+        NSData *configContent = [NSData dataWithContentsOfFile:configFilepath];
+        return [self getConfigFromData:configContent];
+    }
+    return @[];
 }
 
 // Parse config from config file
@@ -213,17 +246,16 @@ static EJSEasyJson __strong *sharedInstance = nil;
         
         EJSEasyJsonClassObject *ejsClassObject = [[EJSEasyJsonClassObject alloc]init];
         ejsClassObject.attribute = [[configOcurrence objectForKey:@"class"] objectForKey:@"attribute"];
-        ejsClassObject.json = [[configOcurrence objectForKey:@"class"] objectForKey:@"json"];
+        ejsClassObject.jsonKey = [[configOcurrence objectForKey:@"class"] objectForKey:@"json"];
         ejsClassObject.type = [[configOcurrence objectForKey:@"class"] objectForKey:@"type"];
-        ejsObject.classDetail = ejsClassObject;
+        ejsObject.classInfo = ejsClassObject;
         
         
         for (NSDictionary *value in [configOcurrence objectForKey:@"parameters"]) {
-            EJSEasyJsonValueObject *ejsValueObject =  [[EJSEasyJsonValueObject alloc]init];
+            EJSEasyJsonParameterObject *ejsValueObject =  [[EJSEasyJsonParameterObject alloc]init];
             ejsValueObject.attribute = [value objectForKey:@"attribute"];
-            ejsValueObject.json = [value objectForKey:@"json"];
-            ejsValueObject.type = [value objectForKey:@"type"];
-            [ejsObject.values addObject:ejsValueObject];
+            ejsValueObject.jsonKey = [value objectForKey:@"json"];
+            [ejsObject.parameters addObject:ejsValueObject];
         }
         [resultArray addObject:ejsObject];
     }

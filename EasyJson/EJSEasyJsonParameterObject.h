@@ -8,10 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
-@interface EJSEasyJsonValueObject : NSObject
+@interface EJSEasyJsonParameterObject : NSObject
 
 @property (strong, nonatomic) NSString *attribute;
-@property (strong, nonatomic) NSString *type;
-@property (strong, nonatomic) NSString *json;
+@property (strong, nonatomic) NSString *jsonKey;
 
 @end

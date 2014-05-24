@@ -11,7 +11,7 @@
 @class EJSEasyJsonClassObject;
 @interface EJSEasyJsonObject : NSObject
 
-@property (strong, nonatomic) EJSEasyJsonClassObject *classDetail;
-@property (strong, nonatomic) NSMutableArray *values;
+@property (strong, nonatomic) EJSEasyJsonClassObject *classInfo;
+@property (strong, nonatomic) NSMutableArray *parameters;
 
 @end
