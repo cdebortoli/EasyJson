@@ -10,6 +10,7 @@
 #import "EJSEasyJsonClassObject.h"
 #import "EJSEasyJsonObject.h"
 #import "EJSEasyJsonParameterObject.h"
+#import <objc/runtime.h>
 
 #define EASY_JSON_ENVELOPE_WITH_OBJECT_NAME 0
 #define EASY_JSON_DATE_FORMAT @"yyyy-MM-dd"
@@ -61,7 +62,7 @@ static EJSEasyJson __strong *sharedInstance = nil;
 
 #pragma mark - Analyze
 
-- (NSArray *)analyzeArray:(NSArray *)jsonArray forClass:(id)objectClass
+- (NSArray *)analyzeArray:(NSArray *)jsonArray forClass:(Class)objectClass
 {
     NSMutableArray *resultArray = [[NSMutableArray alloc]init];
     for (int i = 0; i < jsonArray.count; i++) {
@@ -72,7 +73,7 @@ static EJSEasyJson __strong *sharedInstance = nil;
     return resultArray;
 }
 
-- (id)analyzeDictionary:(NSDictionary *)jsonDictionary forClass:(id)objectClass
+- (id)analyzeDictionary:(NSDictionary *)jsonDictionary forClass:(Class)objectClass
 {
     // Find the config object for the specified class
     EJSEasyJsonObject *configObject = [self getConfigForClass:NSStringFromClass(objectClass)];
@@ -82,34 +83,44 @@ static EJSEasyJson __strong *sharedInstance = nil;
     if (EASY_JSON_ENVELOPE_WITH_OBJECT_NAME)
         jsonValues = [jsonDictionary objectForKey:configObject.classInfo.jsonKey];
     
-    // 1 Nsmanagedobject
-    NSManagedObject *managedObject = [NSEntityDescription insertNewObjectForEntityForName:configObject.classInfo.attribute inManagedObjectContext:[EJSDatabaseManager sharedInstance].databaseCore.managedObjectContext];
-    
-    // Parameters
-    for (EJSEasyJsonParameterObject *parameter in configObject.parameters)
-    {
-        // Property description (Attribute or reliationship)
-        NSPropertyDescription *propertyDescription = [self getPropertyDescriptionForValueObject:parameter withJsonDict:jsonValues withManagedObject:managedObject];
+    if ( class_getSuperclass(objectClass) == [NSManagedObject class]) {
+        NSManagedObject *managedObject = [NSEntityDescription insertNewObjectForEntityForName:configObject.classInfo.attribute inManagedObjectContext:[EJSDatabaseManager sharedInstance].databaseCore.managedObjectContext];
         
-        // Formated value after json parsing
-        id managedObjectValue = [self getParameterForValueObject:parameter withJsonDict:jsonValues withPropertyDescription:propertyDescription];
-        
-        // Attribute
-        if ((managedObjectValue) && (![managedObjectValue isKindOfClass:[NSSet class]]))
+        // Parameters
+        for (EJSEasyJsonParameterObject *parameter in configObject.parameters)
         {
-           [managedObject setValue:managedObjectValue forKey:parameter.attribute];
+            // Property description (Attribute or reliationship)
+            NSPropertyDescription *propertyDescription = [self getPropertyDescriptionForValueObject:parameter withJsonDict:jsonValues withManagedObject:managedObject];
+            
+            // Formated value after json parsing
+            id managedObjectValue = [self getParameterForValueObject:parameter withJsonDict:jsonValues withPropertyDescription:propertyDescription];
+            
+            // Attribute
+            if ((managedObjectValue) && (![managedObjectValue isKindOfClass:[NSSet class]]))
+            {
+               [managedObject setValue:managedObjectValue forKey:parameter.attribute];
+            }
+            // Relationship
+            else if ((managedObjectValue) && ([managedObjectValue isKindOfClass:[NSSet class]]))
+            {
+                [managedObject setValue:managedObjectValue forKey:parameter.attribute];
+            }
         }
-        // Relationship
-        else if ((managedObjectValue) && ([managedObjectValue isKindOfClass:[NSSet class]]))
-        {
-            [managedObject setValue:managedObjectValue forKey:parameter.attribute];
-        }
+        return managedObject;
     }
-    return managedObject;
+    else {
+        id object = [[objectClass alloc]init];
+        
+        unsigned propertyCount;
+        objc_property_t *objectProperties = class_copyPropertyList(objectClass, &propertyCount);
+
+
+    }
+    return nil;
 }
 
 
-#pragma mark - Helper
+#pragma mark - Helper Managed Object
 
 // Get property description
 - (NSPropertyDescription *)getPropertyDescriptionForValueObject:(EJSEasyJsonParameterObject *)valueObject
@@ -218,6 +229,9 @@ static EJSEasyJson __strong *sharedInstance = nil;
     }
     return [NSSet setWithSet:set];
 }
+
+
+#pragma mark - Helper
 
 - (BOOL)checkIfKey:(NSString *)key ExistIn:(NSDictionary *)dict
 {

@@ -12,8 +12,8 @@
 
 + (EJSEasyJson *)sharedInstance;
 
-- (NSArray *)analyzeArray:(NSArray *)jsonArray forClass:(id)objectClass;
-- (id)analyzeDictionary:(NSDictionary *)jsonDictionary forClass:(id)objectClass;
+- (NSArray *)analyzeArray:(NSArray *)jsonArray forClass:(Class)objectClass;
+- (id)analyzeDictionary:(NSDictionary *)jsonDictionary forClass:(Class)objectClass;
 
 
 // 1: Check if array or dictionary
