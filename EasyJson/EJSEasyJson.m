@@ -47,7 +47,6 @@ static EJSEasyJson __strong *sharedInstance = nil;
     if (self != nil)
     {
         easyJsonConfig = [[NSMutableArray alloc]initWithArray:[self readConfigFile]];
-
         dateFormater = [[NSDateFormatter alloc] init];
         [dateFormater setDateFormat:DATE_FORMAT];
     }
@@ -75,7 +74,7 @@ static EJSEasyJson __strong *sharedInstance = nil;
 
 - (id)analyzeDictionary:(NSDictionary *)jsonDictionary forClass:(id)objectClass
 {
-    // Config Object linked to the json dictionary
+    // Find the config object for the specified class
     EJSEasyJsonObject *configObject = [self getConfigForClass:NSStringFromClass(objectClass)];
     
     // JSON values
@@ -84,50 +83,68 @@ static EJSEasyJson __strong *sharedInstance = nil;
     // 1 Nsmanagedobject
     NSManagedObject *managedObject = [NSEntityDescription insertNewObjectForEntityForName:configObject.classInfo.attribute inManagedObjectContext:[EJSDatabaseManager sharedInstance].databaseCore.managedObjectContext];
     
-    for (EJSEasyJsonParameterObject *parameter in configObject.parameters) {
-        id managedObjectValue = [self setParameterForValueObject:parameter withJsonDict:jsonValues withManagedObject:managedObject];
+    // Parameters
+    for (EJSEasyJsonParameterObject *parameter in configObject.parameters)
+    {
+        // Property description (Attribute or reliationship)
+        NSPropertyDescription *propertyDescription = [self getPropertyDescriptionForValueObject:parameter withJsonDict:jsonValues withManagedObject:managedObject];
+        
+        // Formated value after json parsing
+        id managedObjectValue = [self getParameterForValueObject:parameter withJsonDict:jsonValues withPropertyDescription:propertyDescription];
+        
+        // Attribute
         if ((managedObjectValue) && (![managedObjectValue isKindOfClass:[NSSet class]]))
+        {
            [managedObject setValue:managedObjectValue forKey:parameter.attribute];
+        }
+        // Relationship
         else if ((managedObjectValue) && ([managedObjectValue isKindOfClass:[NSSet class]]))
         {
-//            NSMutableSet *reports = [managedObject mutableSetValueForKey:parameter.attribute];
-//            for (id object in managedObjectValue) {
-//                [reports addObject:object];
-//            }
-            // TODO : Inverse ?
             [managedObject setValue:managedObjectValue forKey:parameter.attribute];
         }
-        
     }
     return managedObject;
 }
 
 
+#pragma mark - Helper
 
-- (id)setParameterForValueObject:(EJSEasyJsonParameterObject *)valueObject withJsonDict:(NSDictionary *)jsonDict withManagedObject:(NSManagedObject *)managedObject
+// Get property description
+- (NSPropertyDescription *)getPropertyDescriptionForValueObject:(EJSEasyJsonParameterObject *)valueObject
+                                                   withJsonDict:(NSDictionary *)jsonDict withManagedObject:(NSManagedObject *)managedObject
 {
+    NSEntityDescription *entityDescription = [managedObject entity];
+    NSPropertyDescription *propertyDescription;
+    
     if ([self checkIfKey:valueObject.jsonKey ExistIn:jsonDict]) {
-        
-        // Search attribute
-        NSEntityDescription *entityDescription = [managedObject entity];
-        
-        id propertyDescription;
+        // Search concerned property
         for (NSString *propertyKey in [[entityDescription propertiesByName] allKeys]) {
             if ([propertyKey isEqual:valueObject.attribute]) {
                 propertyDescription = [[entityDescription propertiesByName] objectForKey:propertyKey];
+                break;
             }
         }
-        
-        if ([propertyDescription isKindOfClass:[NSAttributeDescription class]]) {
-            NSString *jsonString = [jsonDict objectForKey:valueObject.jsonKey];
-            return [self returnFormatedAttributeValue:propertyDescription withJson:jsonString];
-        } else if ([propertyDescription isKindOfClass:[NSRelationshipDescription class]]) {
-            NSArray *jsonArray = [jsonDict objectForKey:valueObject.jsonKey];
-            return [NSSet setWithSet:[self returnSetForRelationship:propertyDescription withJson:jsonArray]];
-        }
     }
+    return propertyDescription;
+}
+
+
+// Get formated parameter
+- (id)getParameterForValueObject:(EJSEasyJsonParameterObject *)valueObject withJsonDict:(NSDictionary *)jsonDict withPropertyDescription:(NSPropertyDescription *)propertyDescription
+{
+
+    // Get the formated value or set
+    if ([propertyDescription isKindOfClass:[NSAttributeDescription class]]) {
+        NSString *jsonString = [jsonDict objectForKey:valueObject.jsonKey];
+        return [self returnFormatedAttributeValue:(NSAttributeDescription *)propertyDescription withJson:jsonString];
+    } else if ([propertyDescription isKindOfClass:[NSRelationshipDescription class]]) {
+        NSArray *jsonArray = [jsonDict objectForKey:valueObject.jsonKey];
+        return [self returnSetForRelationship:(NSRelationshipDescription *)propertyDescription withJson:jsonArray];
+    }
+    
     return nil;
 }
+
 
 - (id)returnFormatedAttributeValue:(NSAttributeDescription *)attributeDescription withJson:(NSString *)jsonString
 {
@@ -200,9 +217,6 @@ static EJSEasyJson __strong *sharedInstance = nil;
     return [NSSet setWithSet:set];
 }
 
-
-#pragma mark - Helper
-
 - (BOOL)checkIfKey:(NSString *)key ExistIn:(NSDictionary *)dict
 {
     if([dict objectForKey:key] != nil && [dict objectForKey:key] != [NSNull null])
@@ -261,7 +275,16 @@ static EJSEasyJson __strong *sharedInstance = nil;
     }
     return resultArray;
 }
-
+/* Set inverse
+ 
+ 
+ //            NSString *inverseRelationshipKey = [((NSRelationshipDescription *)propertyDescription).inverseRelationship name];
+ //            for (NSManagedObject *relationManagedObject in [managedObjectValue allObjects]) {
+ //                NSMutableSet *inverseRelationshipSet = [relationManagedObject mutableSetValueForKey:inverseRelationshipKey];
+ //                [inverseRelationshipSet addObject:managedObject];
+ //            }
+ */
+ 
 
 
 @end
