@@ -12,7 +12,7 @@
 #import "EJSEasyJsonParameterObject.h"
 
 #define EASY_JSON_ENVELOPE_WITH_OBJECT_NAME 0
-#define DATE_FORMAT @"yyyy-MM-dd"
+#define EASY_JSON_DATE_FORMAT @"yyyy-MM-dd"
 
 #define NSNumWithInt(i)                         ([NSNumber numberWithInt:(i)])
 #define NSNumWithFloat(f)                       ([NSNumber numberWithFloat:(f)])
@@ -49,7 +49,7 @@ static EJSEasyJson __strong *sharedInstance = nil;
     {
         easyJsonConfig = [[NSMutableArray alloc]initWithArray:[self readConfigFile]];
         dateFormater = [[NSDateFormatter alloc] init];
-        [dateFormater setDateFormat:DATE_FORMAT];
+        [dateFormater setDateFormat:EASY_JSON_DATE_FORMAT];
     }
     return self;
 }
@@ -69,8 +69,7 @@ static EJSEasyJson __strong *sharedInstance = nil;
             [resultArray addObject:[self analyzeDictionary:[jsonArray objectAtIndex:i] forClass:objectClass]];
         }
     }
-    
-    return nil;
+    return resultArray;
 }
 
 - (id)analyzeDictionary:(NSDictionary *)jsonDictionary forClass:(id)objectClass
@@ -266,7 +265,6 @@ static EJSEasyJson __strong *sharedInstance = nil;
         ejsClassObject.jsonKey = [[configOcurrence objectForKey:@"class"] objectForKey:@"json"];
         ejsClassObject.type = [[configOcurrence objectForKey:@"class"] objectForKey:@"type"];
         ejsObject.classInfo = ejsClassObject;
-        
         
         for (NSDictionary *value in [configOcurrence objectForKey:@"parameters"]) {
             EJSEasyJsonParameterObject *ejsValueObject =  [[EJSEasyJsonParameterObject alloc]init];
