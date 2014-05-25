@@ -11,6 +11,7 @@
 #import "EJSEasyJsonObject.h"
 #import "EJSEasyJsonParameterObject.h"
 
+#define EASY_JSON_ENVELOPE_WITH_OBJECT_NAME 0
 #define DATE_FORMAT @"yyyy-MM-dd"
 
 #define NSNumWithInt(i)                         ([NSNumber numberWithInt:(i)])
@@ -78,7 +79,9 @@ static EJSEasyJson __strong *sharedInstance = nil;
     EJSEasyJsonObject *configObject = [self getConfigForClass:NSStringFromClass(objectClass)];
     
     // JSON values
-    NSDictionary *jsonValues = [jsonDictionary objectForKey:configObject.classInfo.jsonKey];
+    NSDictionary *jsonValues = jsonDictionary;
+    if (EASY_JSON_ENVELOPE_WITH_OBJECT_NAME)
+        jsonValues = [jsonDictionary objectForKey:configObject.classInfo.jsonKey];
     
     // 1 Nsmanagedobject
     NSManagedObject *managedObject = [NSEntityDescription insertNewObjectForEntityForName:configObject.classInfo.attribute inManagedObjectContext:[EJSDatabaseManager sharedInstance].databaseCore.managedObjectContext];
