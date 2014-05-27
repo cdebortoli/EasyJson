@@ -25,5 +25,13 @@
                     { "attribute": "name", "json": "airportName" },
                     { "attribute": "aircrafts", "json": "airportAircrafts" }
                     ]
+ },
+ {
+    "class" : { "attribute" : "EJSCustomObject", "json": "customObject" },
+    "parameters" : [
+                    { "attribute": "attrString", "json": "customAttrString" },
+                    { "attribute": "attrDate", "json": "customAttrDate" },
+                    { "attribute": "attrInt", "json": "customAttrInt" }
+                    ]
  }
 ]

@@ -110,15 +110,20 @@ static EJSEasyJson __strong *sharedInstance = nil;
     }
     else {
         id object = [[objectClass alloc]init];
-        
-        unsigned propertyCount;
-        objc_property_t *objectProperties = class_copyPropertyList(objectClass, &propertyCount);
 
+        // Parameters
+        for (EJSEasyJsonParameterObject *parameter in configObject.parameters)
+        {
+            objc_property_t property = [self getObjectPropertyForValueObject:parameter withJsonDict:jsonDictionary withObject:object];
+            NSLog(@"--%@", parameter.attribute);
+            fprintf(stdout, "%s \n", property_getName(property));
+            id objectValue = [self getObjectParameterForValueObject:parameter withJsonDict:jsonDictionary withObjcProperty:property];
+//            [object setValue:objectValue forKeyPath:[NSString stringWithUTF8String:property_getName(property)]];
+        }
 
     }
     return nil;
 }
-
 
 #pragma mark - Helper Managed Object
 
@@ -231,6 +236,65 @@ static EJSEasyJson __strong *sharedInstance = nil;
 }
 
 
+#pragma mark - Helper NSObject
+
+- (objc_property_t) getObjectPropertyForValueObject:(EJSEasyJsonParameterObject *)valueObject withJsonDict:(NSDictionary *)jsonDict withObject:(NSObject *)object
+{
+    unsigned propertyCount;
+    objc_property_t propertyResult = NULL;
+    objc_property_t *objectProperties = class_copyPropertyList([object class], &propertyCount);
+    
+    for (int i = 0; i < propertyCount; i++) {
+        if ([[NSString stringWithUTF8String:property_getName(objectProperties[i])] isEqual:valueObject.attribute]) {
+            propertyResult = objectProperties[i];
+            break;
+        }
+    }
+    
+    return propertyResult;
+}
+
+- (id)getObjectParameterForValueObject:(EJSEasyJsonParameterObject *)valueObject withJsonDict:(NSDictionary *)jsonDict withObjcProperty:(objc_property_t)objectProperty
+{
+    const char *property_type = property_getAttributes(objectProperty);
+    fprintf(stdout, "%-------s \n", property_type);
+    
+    // Float
+    if (property_type[1] == 'f') {
+        NSLog(@"FLOAT");
+    }
+    // Short
+    else if (property_type[1] == 's') {
+        NSLog(@"SHORT");
+    }
+    // Int
+    else if (property_type[1] == 'i') {
+        NSLog(@"INT");
+    }
+    else if (property_type[1] == '@') {
+        NSString * typeString = [NSString stringWithUTF8String:property_type];
+        NSArray * attributes = [typeString componentsSeparatedByString:@","];
+        NSString * typeAttribute = [attributes objectAtIndex:0];
+        
+        NSString * typeClassName = [typeAttribute substringWithRange:NSMakeRange(3, [typeAttribute length]-4)];
+        Class typeClass = NSClassFromString(typeClassName);
+        if (typeClass != nil) {
+            if (typeClass == [NSDate class]) {
+                NSLog(@"DATE");
+            }
+            else if (typeClass == [NSString class]) {
+                NSLog(@"STRING");
+                
+            }
+            else if(typeClass == [NSNumber class]) {
+                NSLog(@"NUMBER");
+            }
+        }
+    }
+    return nil;
+}
+
+
 #pragma mark - Helper
 
 - (BOOL)checkIfKey:(NSString *)key ExistIn:(NSDictionary *)dict
@@ -290,15 +354,6 @@ static EJSEasyJson __strong *sharedInstance = nil;
     }
     return resultArray;
 }
-/* Set inverse
- 
- 
- //            NSString *inverseRelationshipKey = [((NSRelationshipDescription *)propertyDescription).inverseRelationship name];
- //            for (NSManagedObject *relationManagedObject in [managedObjectValue allObjects]) {
- //                NSMutableSet *inverseRelationshipSet = [relationManagedObject mutableSetValueForKey:inverseRelationshipKey];
- //                [inverseRelationshipSet addObject:managedObject];
- //            }
- */
  
 
 
