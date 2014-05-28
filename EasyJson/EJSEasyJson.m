@@ -19,6 +19,7 @@
 #define NSNumWithFloat(f)                       ([NSNumber numberWithFloat:(f)])
 #define NSNumWithBool(b)                        ([NSNumber numberWithBool:(b)])
 #define NSNumWithDouble(d)                      ([NSNumber numberWithDouble:(d)])
+#define NSNumWithLong(l)                        ([NSNumber numberWithLong:(l)])
 #define IntFromNSNum(n)                         ([(n) intValue])
 #define FloatFromNSNum(n)                       ([(n) floatValue])
 #define BoolFromNSNum(n)                        ([(n) boolValue])
@@ -114,13 +115,12 @@ static EJSEasyJson __strong *sharedInstance = nil;
         // Parameters
         for (EJSEasyJsonParameterObject *parameter in configObject.parameters)
         {
-            objc_property_t property = [self getObjectPropertyForValueObject:parameter withJsonDict:jsonDictionary withObject:object];
-            NSLog(@"--%@", parameter.attribute);
-            fprintf(stdout, "%s \n", property_getName(property));
-            id objectValue = [self getObjectParameterForValueObject:parameter withJsonDict:jsonDictionary withObjcProperty:property];
+            // Formated value after json parsing
+//            id objectValue = [self getObjectParameterForValueObject:parameter withJsonDict:jsonDictionary withObjcProperty:property];
+            [self setObjectParameterForValueObject:parameter withJsonDict:jsonDictionary withObject:object];
 //            [object setValue:objectValue forKeyPath:[NSString stringWithUTF8String:property_getName(property)]];
         }
-
+        return object;
     }
     return nil;
 }
@@ -150,7 +150,6 @@ static EJSEasyJson __strong *sharedInstance = nil;
 // Get formated parameter
 - (id)getParameterForValueObject:(EJSEasyJsonParameterObject *)valueObject withJsonDict:(NSDictionary *)jsonDict withPropertyDescription:(NSPropertyDescription *)propertyDescription
 {
-
     // Get the formated value or set
     if ([propertyDescription isKindOfClass:[NSAttributeDescription class]]) {
         NSString *jsonString = [jsonDict objectForKey:valueObject.jsonKey];
@@ -238,56 +237,90 @@ static EJSEasyJson __strong *sharedInstance = nil;
 
 #pragma mark - Helper NSObject
 
-- (objc_property_t) getObjectPropertyForValueObject:(EJSEasyJsonParameterObject *)valueObject withJsonDict:(NSDictionary *)jsonDict withObject:(NSObject *)object
+// Get the type of property from NSObject according to the EasyJsonParameterObject
+- (objc_property_t) getObjectPropertyForValueObject:(EJSEasyJsonParameterObject *)valueObject withObject:(NSObject *)object
 {
-    unsigned propertyCount;
     objc_property_t propertyResult = NULL;
-    objc_property_t *objectProperties = class_copyPropertyList([object class], &propertyCount);
+    unsigned propertyCount;
     
+    // Each properties
+    objc_property_t *objectProperties = class_copyPropertyList([object class], &propertyCount);
     for (int i = 0; i < propertyCount; i++) {
+        // If Property corresponding with EasyJsonParameterObject
         if ([[NSString stringWithUTF8String:property_getName(objectProperties[i])] isEqual:valueObject.attribute]) {
             propertyResult = objectProperties[i];
             break;
         }
     }
-    
     return propertyResult;
 }
 
-- (id)getObjectParameterForValueObject:(EJSEasyJsonParameterObject *)valueObject withJsonDict:(NSDictionary *)jsonDict withObjcProperty:(objc_property_t)objectProperty
+// Get the value formated of specific property from JSON
+- (id)setObjectParameterForValueObject:(EJSEasyJsonParameterObject *)valueObject withJsonDict:(NSDictionary *)jsonDict withObject:(id)object
 {
-    const char *property_type = property_getAttributes(objectProperty);
-    fprintf(stdout, "%-------s \n", property_type);
+    // Json
+    NSString *jsonString = [jsonDict objectForKey:valueObject.jsonKey];
+
+    // Property
+    objc_property_t property = [self getObjectPropertyForValueObject:valueObject withObject:object];
+    const char *propertyType = property_getAttributes(property);
+    NSString *propertyKey = [NSString stringWithUTF8String:property_getName(property)];
     
+    fprintf(stdout, "%s \n", propertyType);
+
     // Float
-    if (property_type[1] == 'f') {
-        NSLog(@"FLOAT");
+    if (propertyType[1] == 'f') {
+        [object setValue:NSNumWithFloat([jsonString floatValue]) forKey:propertyKey];
     }
-    // Short
-    else if (property_type[1] == 's') {
+    // Short // TODO
+    else if (propertyType[1] == 's') {
         NSLog(@"SHORT");
     }
-    // Int
-    else if (property_type[1] == 'i') {
-        NSLog(@"INT");
+    // Int or nsinteger // TODO
+    else if (propertyType[1] == 'i') {
+        [object setValue:NSNumWithInt([jsonString intValue]) forKey:propertyKey];
     }
-    else if (property_type[1] == '@') {
-        NSString * typeString = [NSString stringWithUTF8String:property_type];
+    // Double
+    else if (propertyType[1] == 'd') {
+        [object setValue:NSNumWithFloat([jsonString floatValue]) forKey:propertyKey];
+    }
+    // Long
+    else if(propertyType[1] == 'd' ) {
+        [object setValue:NSNumWithDouble([jsonString doubleValue]) forKey:propertyKey];
+    }
+    // Bool
+    else if(propertyType[1] == 'c' ) {
+        [object setValue:NSNumWithBool([jsonString boolValue]) forKey:propertyKey];
+    }
+    // NSObject
+    else if (propertyType[1] == '@') {
+        // Get NSType from propertyType
+        NSString * typeString = [NSString stringWithUTF8String:propertyType];
         NSArray * attributes = [typeString componentsSeparatedByString:@","];
         NSString * typeAttribute = [attributes objectAtIndex:0];
-        
         NSString * typeClassName = [typeAttribute substringWithRange:NSMakeRange(3, [typeAttribute length]-4)];
+        
+        // Get Class
         Class typeClass = NSClassFromString(typeClassName);
+        
         if (typeClass != nil) {
+            // NSDate
             if (typeClass == [NSDate class]) {
-                NSLog(@"DATE");
+                [object setValue:[dateFormater dateFromString:jsonString] forKey:propertyKey];
             }
+            // NSString
             else if (typeClass == [NSString class]) {
-                NSLog(@"STRING");
-                
+                [object setValue:jsonString forKey:propertyKey];
             }
+            // NSNumber
             else if(typeClass == [NSNumber class]) {
-                NSLog(@"NUMBER");
+                NSNumberFormatter *numFormatter = [[NSNumberFormatter alloc] init];
+                [numFormatter setNumberStyle:NSNumberFormatterDecimalStyle];
+                [object setValue:[numFormatter numberFromString:jsonString] forKey:propertyKey];
+            }
+            // NSData
+            else if(typeClass == [NSData class]) {
+                [object setValue:[jsonString dataUsingEncoding:NSUTF8StringEncoding] forKey:propertyKey];
             }
         }
     }
