@@ -274,7 +274,7 @@ static EJSEasyJson __strong *sharedInstance = nil;
     objc_property_t property = [self getPropertyFromObject:object withParameter:parameter jsonDict:jsonDict];
     if (property)
     {
-        NSString *jsonString = [jsonDict objectForKey:parameter.jsonKey];
+        id jsonString = [jsonDict objectForKey:parameter.jsonKey];
 
         const char *propertyType = property_getAttributes(property);
         NSString *propertyKey = [NSString stringWithUTF8String:property_getName(property)];
@@ -287,7 +287,7 @@ static EJSEasyJson __strong *sharedInstance = nil;
         else if (propertyType[1] == 's') {
             NSLog(@"SHORT");
         }
-        // Int or nsinteger // TODO
+        // Int or nsinteger
         else if (propertyType[1] == 'i') {
             [object setValue:NSNumWithInt([jsonString intValue]) forKey:propertyKey];
         }
@@ -308,21 +308,23 @@ static EJSEasyJson __strong *sharedInstance = nil;
             Class typeClass = [self classFromPropertyType:propertyType];
             
             if (typeClass != nil) {
-                // NSDate
                 if (typeClass == [NSDate class]) {
                     [object setValue:[dateFormater dateFromString:jsonString] forKey:propertyKey];
                 }
-                // NSString
                 else if (typeClass == [NSString class]) {
                     [object setValue:jsonString forKey:propertyKey];
                 }
-                // NSNumber
                 else if(typeClass == [NSNumber class]) {
                     [object setValue:[self numberFormString:jsonString] forKey:propertyKey];
                 }
-                // NSData
                 else if(typeClass == [NSData class]) {
                     [object setValue:[jsonString dataUsingEncoding:NSUTF8StringEncoding] forKey:propertyKey];
+                }
+                else if(typeClass == [NSArray class]) {
+                    // Possible ?
+                }
+                else if (typeClass == [NSDictionary class]) {
+                    // Possible ?
                 }
             }
         }

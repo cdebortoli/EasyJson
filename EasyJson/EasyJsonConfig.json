@@ -1,6 +1,6 @@
 [
  {
-    "class" : { "attribute"  : "Aircraft", "type": "managedObject", "json" : "aircraft" },
+    "class" : { "attribute"  : "Aircraft", "json" : "aircraft" },
     "parameters" : [
                      { "attribute": "primaryKey", "json": "aircraftId" },
                      { "attribute": "name", "json": "aircraftName" },
@@ -11,7 +11,7 @@
                     ]
  },
  {
-    "class" : { "attribute"  : "Pilot", "type": "managedObject", "json" : "pilot" },
+    "class" : { "attribute"  : "Pilot", "json" : "pilot" },
     "parameters" : [
                      { "attribute": "primaryKey", "json": "pilotId" },
                      { "attribute": "name", "json": "pilotName" },
@@ -19,7 +19,7 @@
                     ]
  },
  {
-    "class" : { "attribute"  : "Airport", "type": "managedObject", "json" : "airport" },
+    "class" : { "attribute"  : "Airport", "json" : "airport" },
     "parameters" : [
                     { "attribute": "primaryKey", "json": "airportId" },
                     { "attribute": "name", "json": "airportName" },
@@ -38,7 +38,7 @@
                     { "attribute": "attrBool", "json": "customAttrBool" },
                     { "attribute": "attrDouble", "json": "customAttrDouble" },
                     { "attribute": "attrLong", "json": "customAttrLong" },
-                    { "attribute": "attrFloat", "json": "customAttrFloat" },
+                    { "attribute": "attrFloat", "json": "customAttrFloat" }
                     ]
  }
 ]
