@@ -38,7 +38,9 @@
                     { "attribute": "attrBool", "json": "customAttrBool" },
                     { "attribute": "attrDouble", "json": "customAttrDouble" },
                     { "attribute": "attrLong", "json": "customAttrLong" },
-                    { "attribute": "attrFloat", "json": "customAttrFloat" }
+                    { "attribute": "attrFloat", "json": "customAttrFloat" },
+                    { "attribute": "attrArray", "json": "customAttrArray", "type": "EJSCustomObject" },
+                    { "attribute": "attrDictionary", "json": "customAttrDictionary", "type": "EJSCustomObject" }
                     ]
  }
 ]

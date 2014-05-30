@@ -12,5 +12,5 @@
 
 @property (strong, nonatomic) NSString *attribute;
 @property (strong, nonatomic) NSString *jsonKey;
-
+@property (strong, nonatomic) NSString *type;
 @end

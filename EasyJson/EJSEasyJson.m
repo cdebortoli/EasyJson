@@ -297,10 +297,18 @@ static EJSEasyJson __strong *sharedInstance = nil;
                     [object setValue:[jsonString dataUsingEncoding:NSUTF8StringEncoding] forKey:propertyKey];
                 }
                 else if(typeClass == [NSArray class]) {
-                    // Possible ?
+                    NSArray *jsonArray = (NSArray *)jsonString;
+                    [object setValue:[self analyzeArray:jsonArray forClass:NSClassFromString(parameter.type)] forKey:propertyKey];
                 }
                 else if (typeClass == [NSDictionary class]) {
-                    // Possible ?
+                    NSDictionary *jsonDictionary = (NSDictionary *)jsonString;
+                    
+                    NSMutableDictionary *resultDictionary = [[NSMutableDictionary alloc]init];
+                    for (NSString *dictionaryKey in [jsonDictionary allKeys]) {
+                        [resultDictionary setValue:[self analyzeDictionary:[jsonDictionary objectForKey:dictionaryKey] forClass:NSClassFromString(parameter.type)] forKey:dictionaryKey];
+                    }
+                    
+                    [object setValue:resultDictionary forKey:propertyKey];
                 }
             }
         }
@@ -377,7 +385,11 @@ static EJSEasyJson __strong *sharedInstance = nil;
             EJSEasyJsonParameterObject *ejsValueObject =  [[EJSEasyJsonParameterObject alloc]init];
             ejsValueObject.attribute = [value objectForKey:@"attribute"];
             ejsValueObject.jsonKey = [value objectForKey:@"json"];
+            if ([self checkIfKey:@"type" ExistIn:value]) {
+                ejsValueObject.type = [value objectForKey:@"type"];
+            }
             [ejsObject.parameters addObject:ejsValueObject];
+            
         }
         [resultArray addObject:ejsObject];
     }
