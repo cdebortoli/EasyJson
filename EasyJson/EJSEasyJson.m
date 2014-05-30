@@ -79,9 +79,9 @@ static EJSEasyJson __strong *sharedInstance = nil;
     EJSEasyJsonObject *configObject = [self getConfigForClass:NSStringFromClass(objectClass)];
     
     // 2 - JSON values
-    NSDictionary *jsonValues = jsonDictionary;
+    NSDictionary *jsonFormatedDictionary = jsonDictionary;
     if (EASY_JSON_ENVELOPE_WITH_OBJECT_NAME)
-        jsonValues = [jsonDictionary objectForKey:configObject.classInfo.jsonKey];
+        jsonFormatedDictionary = [jsonDictionary objectForKey:configObject.classInfo.jsonKey];
     
     // 3 - NSManagedobject
     if (class_getSuperclass(objectClass) == [NSManagedObject class])
@@ -89,7 +89,7 @@ static EJSEasyJson __strong *sharedInstance = nil;
         NSManagedObject *managedObject = [NSEntityDescription insertNewObjectForEntityForName:configObject.classInfo.attribute inManagedObjectContext:[EJSDatabaseManager sharedInstance].databaseCore.managedObjectContext];
         for (EJSEasyJsonParameterObject *parameter in configObject.parameters)
         {
-            [self setPropertyForManagedObject:managedObject andParameter:parameter withJsonDict:jsonDictionary];
+            [self setPropertyForManagedObject:managedObject andParameter:parameter withJsonDict:jsonFormatedDictionary];
 
         }
         return managedObject;
@@ -100,7 +100,7 @@ static EJSEasyJson __strong *sharedInstance = nil;
         id object = [[objectClass alloc]init];
         for (EJSEasyJsonParameterObject *parameter in configObject.parameters)
         {
-            [self setPropertyForObject:object andParameter:parameter withJsonDict:jsonDictionary];
+            [self setPropertyForObject:object andParameter:parameter withJsonDict:jsonFormatedDictionary];
         }
         return object;
     }
@@ -111,20 +111,11 @@ static EJSEasyJson __strong *sharedInstance = nil;
 #pragma mark - Managed Object GET
 
 // Get property description
-- (NSPropertyDescription *)getPropertyDescriptionFromManagedObject:(NSManagedObject *)managedObject withParameter:(EJSEasyJsonParameterObject *)parameter andJsonDict:(NSDictionary *)jsonDict
+- (NSPropertyDescription *)getPropertyDescriptionFromManagedObject:(NSManagedObject *)managedObject withParameter:(EJSEasyJsonParameterObject *)parameter
 {
     NSEntityDescription *entityDescription = [managedObject entity];
     NSPropertyDescription *propertyDescription;
-    
-    if ([self checkIfKey:parameter.jsonKey ExistIn:jsonDict]) {
-        // Search concerned property
-        for (NSString *propertyKey in [[entityDescription propertiesByName] allKeys]) {
-            if ([propertyKey isEqual:parameter.attribute]) {
-                propertyDescription = [[entityDescription propertiesByName] objectForKey:propertyKey];
-                break;
-            }
-        }
-    }
+    propertyDescription = [[entityDescription propertiesByName] objectForKey:parameter.attribute];
     return propertyDescription;
 }
 
@@ -218,10 +209,11 @@ static EJSEasyJson __strong *sharedInstance = nil;
 // Set the managed object value
 - (void)setPropertyForManagedObject:(NSManagedObject *)managedObject andParameter:(EJSEasyJsonParameterObject *)parameter withJsonDict:(NSDictionary *)jsonDict
 {
-    // A - Property description (Attribute or reliationship)
-    NSPropertyDescription *propertyDescription = [self getPropertyDescriptionFromManagedObject:managedObject withParameter:parameter andJsonDict:jsonDict];
-    if (propertyDescription)
+    if ([self checkIfKey:parameter.jsonKey ExistIn:jsonDict])
     {
+        // A - Property description (Attribute or reliationship)
+        NSPropertyDescription *propertyDescription = [self getPropertyDescriptionFromManagedObject:managedObject withParameter:parameter];
+
         // B - Formated value after json parsing
         id managedObjectValue = [self getManagedObjectValueForParameter:parameter propertyDescription:propertyDescription jsonDict:jsonDict];
         
@@ -242,25 +234,10 @@ static EJSEasyJson __strong *sharedInstance = nil;
 #pragma mark - NSObject GET
 
 // Get the type of property from NSObject according to the EasyJsonParameterObject
-- (objc_property_t) getPropertyFromObject:(id)object withParameter:(EJSEasyJsonParameterObject *)parameter jsonDict:(NSDictionary *)jsonDict
+- (objc_property_t) getPropertyFromObject:(id)object withParameter:(EJSEasyJsonParameterObject *)parameter
 {
     objc_property_t propertyResult = NULL;
-    unsigned propertyCount;
-    
-    if ([self checkIfKey:parameter.jsonKey ExistIn:jsonDict])
-    {
-        // Each properties
-        objc_property_t *objectProperties = class_copyPropertyList([object class], &propertyCount);
-        for (int i = 0; i < propertyCount; i++)
-        {
-            // If Property corresponding with EasyJsonParameterObject
-            if ([[NSString stringWithUTF8String:property_getName(objectProperties[i])] isEqual:parameter.attribute])
-            {
-                propertyResult = objectProperties[i];
-                break;
-            }
-        }
-    }
+    propertyResult = class_getProperty([object class], [parameter.attribute UTF8String]);
     return propertyResult;
 }
 
@@ -270,14 +247,13 @@ static EJSEasyJson __strong *sharedInstance = nil;
 // Get the value formated of specific property from JSON
 - (void) setPropertyForObject:(id)object andParameter:(EJSEasyJsonParameterObject *)parameter withJsonDict:(NSDictionary *)jsonDict
 {
-    // Property
-    objc_property_t property = [self getPropertyFromObject:object withParameter:parameter jsonDict:jsonDict];
-    if (property)
+    if ([self checkIfKey:parameter.jsonKey ExistIn:jsonDict])
     {
-        id jsonString = [jsonDict objectForKey:parameter.jsonKey];
-
+        objc_property_t property = [self getPropertyFromObject:object withParameter:parameter];
         const char *propertyType = property_getAttributes(property);
-        NSString *propertyKey = [NSString stringWithUTF8String:property_getName(property)];
+        NSString *propertyKey    = [NSString stringWithUTF8String:property_getName(property)];
+        
+        id jsonString = [jsonDict objectForKey:parameter.jsonKey];
 
         // Float
         if (propertyType[1] == 'f') {
