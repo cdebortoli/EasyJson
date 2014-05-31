@@ -46,6 +46,7 @@
 		4805016F193783E60089E36A /* EasyJsonMockAiractWithEnvelope.json in Resources */ = {isa = PBXBuildFile; fileRef = 4805016A193783E60089E36A /* EasyJsonMockAiractWithEnvelope.json */; };
 		4805017C1937897C0089E36A /* EJSmodel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 4805017A1937897C0089E36A /* EJSmodel.xcdatamodeld */; };
 		4805017D1937897C0089E36A /* EJSmodel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 4805017A1937897C0089E36A /* EJSmodel.xcdatamodeld */; };
+		48FCFE641939DC40006E9C51 /* EasyJsonConfig.json.tpl in Resources */ = {isa = PBXBuildFile; fileRef = 48FCFE631939DC40006E9C51 /* EasyJsonConfig.json.tpl */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -78,7 +79,7 @@
 		4805012D193782310089E36A /* EasyJsonDemoTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "EasyJsonDemoTests-Info.plist"; sourceTree = "<group>"; };
 		4805012F193782310089E36A /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		48050131193782310089E36A /* EasyJsonDemoTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = EasyJsonDemoTests.m; sourceTree = "<group>"; };
-		4805013C1937826F0089E36A /* EasyJsonConfig.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = EasyJsonConfig.json; path = ../EasyJson/EasyJsonConfig.json; sourceTree = "<group>"; };
+		4805013C1937826F0089E36A /* EasyJsonConfig.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; name = EasyJsonConfig.json; path = ../../EasyJson/EasyJsonConfig.json; sourceTree = "<group>"; };
 		4805013D1937826F0089E36A /* EJSEasyJson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EJSEasyJson.h; path = ../EasyJson/EJSEasyJson.h; sourceTree = "<group>"; };
 		4805013E1937826F0089E36A /* EJSEasyJson.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = EJSEasyJson.m; path = ../EasyJson/EJSEasyJson.m; sourceTree = "<group>"; };
 		4805013F1937826F0089E36A /* EJSEasyJsonClassObject.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = EJSEasyJsonClassObject.h; path = ../EasyJson/EJSEasyJsonClassObject.h; sourceTree = "<group>"; };
@@ -107,6 +108,7 @@
 		48050169193783E60089E36A /* EasyJsonMockAircraft.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = EasyJsonMockAircraft.json; sourceTree = "<group>"; };
 		4805016A193783E60089E36A /* EasyJsonMockAiractWithEnvelope.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = EasyJsonMockAiractWithEnvelope.json; sourceTree = "<group>"; };
 		4805017B1937897C0089E36A /* EJSmodel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = EJSmodel.xcdatamodel; sourceTree = "<group>"; };
+		48FCFE631939DC40006E9C51 /* EasyJsonConfig.json.tpl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = EasyJsonConfig.json.tpl; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -172,14 +174,15 @@
 				4805017E193789E80089E36A /* Datamodel */,
 				48050171193784170089E36A /* Mock */,
 				480501701937840C0089E36A /* Services */,
+				4805013C1937826F0089E36A /* EasyJsonConfig.json */,
 				48050115193782310089E36A /* EJSAppDelegate.h */,
 				48050116193782310089E36A /* EJSAppDelegate.m */,
 				48050118193782310089E36A /* Main.storyboard */,
 				4805011B193782310089E36A /* EJSViewController.h */,
 				4805011C193782310089E36A /* EJSViewController.m */,
-				4805011E193782310089E36A /* Images.xcassets */,
 				48050163193783CB0089E36A /* EJSCustomObject.h */,
 				48050164193783CB0089E36A /* EJSCustomObject.m */,
+				4805011E193782310089E36A /* Images.xcassets */,
 				4805010D193782310089E36A /* Supporting Files */,
 			);
 			path = EasyJsonDemo;
@@ -218,7 +221,6 @@
 		4805013B193782550089E36A /* EasyJsonFramework */ = {
 			isa = PBXGroup;
 			children = (
-				4805013C1937826F0089E36A /* EasyJsonConfig.json */,
 				4805013D1937826F0089E36A /* EJSEasyJson.h */,
 				4805013E1937826F0089E36A /* EJSEasyJson.m */,
 				4805013F1937826F0089E36A /* EJSEasyJsonClassObject.h */,
@@ -227,6 +229,7 @@
 				480501421937826F0089E36A /* EJSEasyJsonObject.m */,
 				480501431937826F0089E36A /* EJSEasyJsonParameterObject.h */,
 				480501441937826F0089E36A /* EJSEasyJsonParameterObject.m */,
+				48FCFE631939DC40006E9C51 /* EasyJsonConfig.json.tpl */,
 			);
 			name = EasyJsonFramework;
 			sourceTree = "<group>";
@@ -346,6 +349,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				4805011F193782310089E36A /* Images.xcassets in Resources */,
+				48FCFE641939DC40006E9C51 /* EasyJsonConfig.json.tpl in Resources */,
 				4805016C193783E60089E36A /* customObjectJson.json in Resources */,
 				4805016D193783E60089E36A /* aircraftJsonWithEnvelope.json in Resources */,
 				480501451937826F0089E36A /* EasyJsonConfig.json in Resources */,
@@ -599,6 +603,7 @@
 				48050137193782310089E36A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		48050138193782310089E36A /* Build configuration list for PBXNativeTarget "EasyJsonDemoTests" */ = {
 			isa = XCConfigurationList;
@@ -607,6 +612,7 @@
 				4805013A193782310089E36A /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 
