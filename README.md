@@ -3,13 +3,16 @@
 
 EasyJson is a library to manage the parsing between NSManagedObject/NSObject and JSON elements.
 
+
 ##How to install it
 
  1. Copy the content of EasyJson folder in your project.
  2. Create a EasyJsonConfig.json file based on the EasyJsonConfig.json.tpl template file.
  3. Configure your EasyJsonConfig.json file. 
 
+
 ##Configure it
+
 ###EasyJsonConfig file
 The rool level of this file is an array which contain each object available for the JSON Parsing.
 
@@ -56,17 +59,20 @@ Example for an Aircraft object:
 **EASY_JSON_DATE_FORMAT**
 Specify the date format used in the JSON data.
 
+
 ##How to use it
 
- - Analyze a NSManagedObject:
+Analyze a NSManagedObject:
 
     NSManagedObject *managedObject = [[EJSEasyJson sharedInstance] analyzeDictionary:JSONDictionary forClass:[NSManagedObject class]];
 
- - Analyze an Array of NSManagedObject:
+Analyze an Array of NSManagedObject:
 
     NSArray *managedObjects = [[EJSEasyJson sharedInstance] analyzeDictionary:JSONArray forClass:[NSManagedObject class]];
 
- 
+To convert an NSmanagedObject/NSObject in Dictionary which is ready for JSON Serialization, simply import the Categoriy files and call the getJsonDictionary method.
+
+    [NSObject getJsonDictionary];
 
 
 ##Integrate tests
