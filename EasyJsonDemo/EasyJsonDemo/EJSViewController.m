@@ -9,6 +9,8 @@
 #import "EJSViewController.h"
 #import "EJSEasyJson.h"
 #import "EJSCustomObject.h"
+#import "NSManagedObject+EasyJson.h"
+#import "NSObject+EasyJson.h"
 
 @interface EJSViewController ()
 
@@ -24,13 +26,15 @@
     
     Aircraft *a1 = [[EJSEasyJson sharedInstance] analyzeDictionary:[self loadService:@"aircraftJson"] forClass:[Aircraft class]];
 //    NSLog(@"%@",a1);
-    
+//    [a1 getJsonDictionary];
     
 //    Aircraft *a2 = [[EJSEasyJson sharedInstance] analyzeDictionary:[self loadService:@"aircraftJsonWithEnvelope"] forClass:[Aircraft class]];
 //    NSLog(@"%@",a2);
     
     EJSCustomObject *customObject = [[EJSEasyJson sharedInstance] analyzeDictionary:[self loadService:@"customObjectJson"] forClass:[EJSCustomObject class]];
 //    NSLog(@"%@", customObject);
+    [customObject getJsonDictionary];
+
 }
 
 - (void)didReceiveMemoryWarning

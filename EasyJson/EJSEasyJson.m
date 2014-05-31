@@ -10,7 +10,6 @@
 #import "EJSEasyJsonClassObject.h"
 #import "EJSEasyJsonObject.h"
 #import "EJSEasyJsonParameterObject.h"
-#import <objc/runtime.h>
 
 
 #define NSNumWithInt(i)                         ([NSNumber numberWithInt:(i)])
@@ -25,7 +24,6 @@
 
 @implementation EJSEasyJson
 {
-    NSMutableArray *easyJsonConfig; // Contain the format of JSON files
     NSDateFormatter *dateFormater;
 }
 
@@ -48,7 +46,7 @@ static EJSEasyJson __strong *sharedInstance = nil;
     self = [super init];
     if (self != nil)
     {
-        easyJsonConfig = [[NSMutableArray alloc]initWithArray:[self readConfigFile]];
+        self.easyJsonConfig = [[NSMutableArray alloc]initWithArray:[self readConfigFile]];
         dateFormater = [[NSDateFormatter alloc] init];
         [dateFormater setDateFormat:EASY_JSON_DATE_FORMAT];
     }
@@ -255,6 +253,7 @@ static EJSEasyJson __strong *sharedInstance = nil;
 
         // Float
         if (propertyType[1] == 'f') {
+//            objc_setAssociatedObject(object, [propertyKey UTF8String], NSNumWithFloat([jsonString floatValue]), OBJC_ASSOCIATION_ASSIGN);
             [object setValue:NSNumWithFloat([jsonString floatValue]) forKey:propertyKey];
         }
         // Short // TODO
@@ -347,7 +346,7 @@ static EJSEasyJson __strong *sharedInstance = nil;
 // Get the config object from a particular class
 - (EJSEasyJsonObject *)getConfigForClass:(NSString *)className
 {
-    for (EJSEasyJsonObject *ejsJsonObject in easyJsonConfig) {
+    for (EJSEasyJsonObject *ejsJsonObject in self.easyJsonConfig) {
         if ([className isEqual:ejsJsonObject.classInfo.attribute]) {
             return ejsJsonObject;
         }

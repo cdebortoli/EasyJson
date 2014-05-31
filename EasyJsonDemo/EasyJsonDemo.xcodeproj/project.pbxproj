@@ -42,6 +42,10 @@
 		4805016D193783E60089E36A /* aircraftJsonWithEnvelope.json in Resources */ = {isa = PBXBuildFile; fileRef = 48050168193783E60089E36A /* aircraftJsonWithEnvelope.json */; };
 		4805017C1937897C0089E36A /* EJSmodel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 4805017A1937897C0089E36A /* EJSmodel.xcdatamodeld */; };
 		4805017D1937897C0089E36A /* EJSmodel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 4805017A1937897C0089E36A /* EJSmodel.xcdatamodeld */; };
+		48E87E3F193A0B3C004CC4CA /* NSManagedObject+EasyJson.m in Sources */ = {isa = PBXBuildFile; fileRef = 48E87E3E193A0B3C004CC4CA /* NSManagedObject+EasyJson.m */; };
+		48E87E40193A0B3C004CC4CA /* NSManagedObject+EasyJson.m in Sources */ = {isa = PBXBuildFile; fileRef = 48E87E3E193A0B3C004CC4CA /* NSManagedObject+EasyJson.m */; };
+		48E87E43193A0B56004CC4CA /* NSObject+EasyJson.m in Sources */ = {isa = PBXBuildFile; fileRef = 48E87E42193A0B56004CC4CA /* NSObject+EasyJson.m */; };
+		48E87E44193A0B56004CC4CA /* NSObject+EasyJson.m in Sources */ = {isa = PBXBuildFile; fileRef = 48E87E42193A0B56004CC4CA /* NSObject+EasyJson.m */; };
 		48FCFE661939DEE3006E9C51 /* EasyJsonConfig.json in Resources */ = {isa = PBXBuildFile; fileRef = 48FCFE651939DEE3006E9C51 /* EasyJsonConfig.json */; };
 		48FCFE6E1939E082006E9C51 /* EasyJsonConfig.json.tpl in Resources */ = {isa = PBXBuildFile; fileRef = 48FCFE6D1939E082006E9C51 /* EasyJsonConfig.json.tpl */; };
 		48FCFE6F1939E082006E9C51 /* EasyJsonConfig.json.tpl in Resources */ = {isa = PBXBuildFile; fileRef = 48FCFE6D1939E082006E9C51 /* EasyJsonConfig.json.tpl */; };
@@ -108,6 +112,10 @@
 		48050169193783E60089E36A /* EasyJsonMockAircraft.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = EasyJsonMockAircraft.json; sourceTree = "<group>"; };
 		4805016A193783E60089E36A /* EasyJsonMockAircraftWithEnvelope.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = EasyJsonMockAircraftWithEnvelope.json; sourceTree = "<group>"; };
 		4805017B1937897C0089E36A /* EJSmodel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = EJSmodel.xcdatamodel; sourceTree = "<group>"; };
+		48E87E3D193A0B3C004CC4CA /* NSManagedObject+EasyJson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSManagedObject+EasyJson.h"; sourceTree = "<group>"; };
+		48E87E3E193A0B3C004CC4CA /* NSManagedObject+EasyJson.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSManagedObject+EasyJson.m"; sourceTree = "<group>"; };
+		48E87E41193A0B56004CC4CA /* NSObject+EasyJson.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = "NSObject+EasyJson.h"; path = "../EasyJson/NSObject+EasyJson.h"; sourceTree = "<group>"; };
+		48E87E42193A0B56004CC4CA /* NSObject+EasyJson.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "NSObject+EasyJson.m"; path = "../EasyJson/NSObject+EasyJson.m"; sourceTree = "<group>"; };
 		48FCFE651939DEE3006E9C51 /* EasyJsonConfig.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = EasyJsonConfig.json; sourceTree = "<group>"; };
 		48FCFE6D1939E082006E9C51 /* EasyJsonConfig.json.tpl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = EasyJsonConfig.json.tpl; path = ../EasyJson/EasyJsonConfig.json.tpl; sourceTree = "<group>"; };
 		48FCFE701939EC91006E9C51 /* EasyJsonMockCustomObject.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = EasyJsonMockCustomObject.json; sourceTree = "<group>"; };
@@ -232,6 +240,10 @@
 				480501421937826F0089E36A /* EJSEasyJsonObject.m */,
 				480501431937826F0089E36A /* EJSEasyJsonParameterObject.h */,
 				480501441937826F0089E36A /* EJSEasyJsonParameterObject.m */,
+				48E87E3D193A0B3C004CC4CA /* NSManagedObject+EasyJson.h */,
+				48E87E3E193A0B3C004CC4CA /* NSManagedObject+EasyJson.m */,
+				48E87E41193A0B56004CC4CA /* NSObject+EasyJson.h */,
+				48E87E42193A0B56004CC4CA /* NSObject+EasyJson.m */,
 			);
 			name = EasyJsonFramework;
 			sourceTree = "<group>";
@@ -382,6 +394,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				48E87E3F193A0B3C004CC4CA /* NSManagedObject+EasyJson.m in Sources */,
 				4805017C1937897C0089E36A /* EJSmodel.xcdatamodeld in Sources */,
 				48050113193782310089E36A /* main.m in Sources */,
 				48050117193782310089E36A /* EJSAppDelegate.m in Sources */,
@@ -394,6 +407,7 @@
 				48050161193783B60089E36A /* Aircraft.m in Sources */,
 				48050159193783510089E36A /* EJSDatabaseCore.m in Sources */,
 				48050162193783B60089E36A /* Airport.m in Sources */,
+				48E87E43193A0B56004CC4CA /* NSObject+EasyJson.m in Sources */,
 				48050165193783CB0089E36A /* EJSCustomObject.m in Sources */,
 				4805014B1937826F0089E36A /* EJSEasyJsonObject.m in Sources */,
 			);
@@ -404,10 +418,12 @@
 			buildActionMask = 2147483647;
 			files = (
 				4805017D1937897C0089E36A /* EJSmodel.xcdatamodeld in Sources */,
+				48E87E40193A0B3C004CC4CA /* NSManagedObject+EasyJson.m in Sources */,
 				480501481937826F0089E36A /* EJSEasyJson.m in Sources */,
 				4805014E1937826F0089E36A /* EJSEasyJsonParameterObject.m in Sources */,
 				4805014A1937826F0089E36A /* EJSEasyJsonClassObject.m in Sources */,
 				48050151193782A80089E36A /* EasyJsonTests.m in Sources */,
+				48E87E44193A0B56004CC4CA /* NSObject+EasyJson.m in Sources */,
 				48050132193782310089E36A /* EasyJsonDemoTests.m in Sources */,
 				4805014C1937826F0089E36A /* EJSEasyJsonObject.m in Sources */,
 			);
