@@ -40,13 +40,14 @@
 		4805016B193783E60089E36A /* aircraftJson.json in Resources */ = {isa = PBXBuildFile; fileRef = 48050166193783E60089E36A /* aircraftJson.json */; };
 		4805016C193783E60089E36A /* customObjectJson.json in Resources */ = {isa = PBXBuildFile; fileRef = 48050167193783E60089E36A /* customObjectJson.json */; };
 		4805016D193783E60089E36A /* aircraftJsonWithEnvelope.json in Resources */ = {isa = PBXBuildFile; fileRef = 48050168193783E60089E36A /* aircraftJsonWithEnvelope.json */; };
-		4805016E193783E60089E36A /* EasyJsonMockAircraft.json in Resources */ = {isa = PBXBuildFile; fileRef = 48050169193783E60089E36A /* EasyJsonMockAircraft.json */; };
-		4805016F193783E60089E36A /* EasyJsonMockAiractWithEnvelope.json in Resources */ = {isa = PBXBuildFile; fileRef = 4805016A193783E60089E36A /* EasyJsonMockAiractWithEnvelope.json */; };
 		4805017C1937897C0089E36A /* EJSmodel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 4805017A1937897C0089E36A /* EJSmodel.xcdatamodeld */; };
 		4805017D1937897C0089E36A /* EJSmodel.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 4805017A1937897C0089E36A /* EJSmodel.xcdatamodeld */; };
 		48FCFE661939DEE3006E9C51 /* EasyJsonConfig.json in Resources */ = {isa = PBXBuildFile; fileRef = 48FCFE651939DEE3006E9C51 /* EasyJsonConfig.json */; };
 		48FCFE6E1939E082006E9C51 /* EasyJsonConfig.json.tpl in Resources */ = {isa = PBXBuildFile; fileRef = 48FCFE6D1939E082006E9C51 /* EasyJsonConfig.json.tpl */; };
 		48FCFE6F1939E082006E9C51 /* EasyJsonConfig.json.tpl in Resources */ = {isa = PBXBuildFile; fileRef = 48FCFE6D1939E082006E9C51 /* EasyJsonConfig.json.tpl */; };
+		48FCFE711939EC91006E9C51 /* EasyJsonMockCustomObject.json in Resources */ = {isa = PBXBuildFile; fileRef = 48FCFE701939EC91006E9C51 /* EasyJsonMockCustomObject.json */; };
+		48FCFE721939EDED006E9C51 /* EasyJsonMockAircraft.json in Resources */ = {isa = PBXBuildFile; fileRef = 48050169193783E60089E36A /* EasyJsonMockAircraft.json */; };
+		48FCFE731939EDED006E9C51 /* EasyJsonMockAircraftWithEnvelope.json in Resources */ = {isa = PBXBuildFile; fileRef = 4805016A193783E60089E36A /* EasyJsonMockAircraftWithEnvelope.json */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -105,10 +106,11 @@
 		48050167193783E60089E36A /* customObjectJson.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = customObjectJson.json; sourceTree = "<group>"; };
 		48050168193783E60089E36A /* aircraftJsonWithEnvelope.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = aircraftJsonWithEnvelope.json; sourceTree = "<group>"; };
 		48050169193783E60089E36A /* EasyJsonMockAircraft.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = EasyJsonMockAircraft.json; sourceTree = "<group>"; };
-		4805016A193783E60089E36A /* EasyJsonMockAiractWithEnvelope.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = EasyJsonMockAiractWithEnvelope.json; sourceTree = "<group>"; };
+		4805016A193783E60089E36A /* EasyJsonMockAircraftWithEnvelope.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = EasyJsonMockAircraftWithEnvelope.json; sourceTree = "<group>"; };
 		4805017B1937897C0089E36A /* EJSmodel.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = EJSmodel.xcdatamodel; sourceTree = "<group>"; };
 		48FCFE651939DEE3006E9C51 /* EasyJsonConfig.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = EasyJsonConfig.json; sourceTree = "<group>"; };
 		48FCFE6D1939E082006E9C51 /* EasyJsonConfig.json.tpl */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; name = EasyJsonConfig.json.tpl; path = ../EasyJson/EasyJsonConfig.json.tpl; sourceTree = "<group>"; };
+		48FCFE701939EC91006E9C51 /* EasyJsonMockCustomObject.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = EasyJsonMockCustomObject.json; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -173,7 +175,6 @@
 			children = (
 				48FCFE651939DEE3006E9C51 /* EasyJsonConfig.json */,
 				4805017E193789E80089E36A /* Datamodel */,
-				48050171193784170089E36A /* Mock */,
 				480501701937840C0089E36A /* Services */,
 				48050115193782310089E36A /* EJSAppDelegate.h */,
 				48050116193782310089E36A /* EJSAppDelegate.m */,
@@ -202,6 +203,7 @@
 		4805012B193782310089E36A /* EasyJsonDemoTests */ = {
 			isa = PBXGroup;
 			children = (
+				48050171193784170089E36A /* Mock */,
 				4805014F193782A80089E36A /* EasyJsonTests.m */,
 				48050131193782310089E36A /* EasyJsonDemoTests.m */,
 				4805012C193782310089E36A /* Supporting Files */,
@@ -248,9 +250,11 @@
 			isa = PBXGroup;
 			children = (
 				48050169193783E60089E36A /* EasyJsonMockAircraft.json */,
-				4805016A193783E60089E36A /* EasyJsonMockAiractWithEnvelope.json */,
+				4805016A193783E60089E36A /* EasyJsonMockAircraftWithEnvelope.json */,
+				48FCFE701939EC91006E9C51 /* EasyJsonMockCustomObject.json */,
 			);
 			name = Mock;
+			path = ../EasyJsonDemo;
 			sourceTree = "<group>";
 		};
 		4805017E193789E80089E36A /* Datamodel */ = {
@@ -354,9 +358,7 @@
 				4805016C193783E60089E36A /* customObjectJson.json in Resources */,
 				4805016D193783E60089E36A /* aircraftJsonWithEnvelope.json in Resources */,
 				4805016B193783E60089E36A /* aircraftJson.json in Resources */,
-				4805016E193783E60089E36A /* EasyJsonMockAircraft.json in Resources */,
 				48050111193782310089E36A /* InfoPlist.strings in Resources */,
-				4805016F193783E60089E36A /* EasyJsonMockAiractWithEnvelope.json in Resources */,
 				4805011A193782310089E36A /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -365,8 +367,11 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				48FCFE721939EDED006E9C51 /* EasyJsonMockAircraft.json in Resources */,
+				48FCFE731939EDED006E9C51 /* EasyJsonMockAircraftWithEnvelope.json in Resources */,
 				48050130193782310089E36A /* InfoPlist.strings in Resources */,
 				48FCFE6F1939E082006E9C51 /* EasyJsonConfig.json.tpl in Resources */,
+				48FCFE711939EC91006E9C51 /* EasyJsonMockCustomObject.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

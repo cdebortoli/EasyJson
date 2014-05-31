@@ -23,14 +23,14 @@
     
     
     Aircraft *a1 = [[EJSEasyJson sharedInstance] analyzeDictionary:[self loadService:@"aircraftJson"] forClass:[Aircraft class]];
-    NSLog(@"%@",a1);
+//    NSLog(@"%@",a1);
     
     
 //    Aircraft *a2 = [[EJSEasyJson sharedInstance] analyzeDictionary:[self loadService:@"aircraftJsonWithEnvelope"] forClass:[Aircraft class]];
 //    NSLog(@"%@",a2);
     
     EJSCustomObject *customObject = [[EJSEasyJson sharedInstance] analyzeDictionary:[self loadService:@"customObjectJson"] forClass:[EJSCustomObject class]];
-    NSLog(@"%@", customObject);
+//    NSLog(@"%@", customObject);
 }
 
 - (void)didReceiveMemoryWarning
