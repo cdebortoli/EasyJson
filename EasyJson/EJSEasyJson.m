@@ -12,8 +12,6 @@
 #import "EJSEasyJsonParameterObject.h"
 #import <objc/runtime.h>
 
-#define EASY_JSON_ENVELOPE_WITH_OBJECT_NAME 0
-#define EASY_JSON_DATE_FORMAT @"yyyy-MM-dd"
 
 #define NSNumWithInt(i)                         ([NSNumber numberWithInt:(i)])
 #define NSNumWithFloat(f)                       ([NSNumber numberWithFloat:(f)])

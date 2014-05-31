@@ -8,6 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
+#define EASY_JSON_ENVELOPE_WITH_OBJECT_NAME 0
+#define EASY_JSON_DATE_FORMAT @"yyyy-MM-dd"
+
 @interface EJSEasyJson : NSObject
 
 + (EJSEasyJson *)sharedInstance;
