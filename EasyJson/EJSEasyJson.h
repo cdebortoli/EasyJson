@@ -19,10 +19,15 @@
 
 @property (strong, nonatomic) NSMutableArray *easyJsonConfig; // Contain the format of JSON files
 
+// Analyze
 - (NSArray *)analyzeArray:(NSArray *)jsonArray forClass:(Class)objectClass;
 - (id)analyzeDictionary:(NSDictionary *)jsonDictionary forClass:(Class)objectClass;
 
+// Configuration
 - (EJSEasyJsonObject *)getConfigForClass:(NSString *)className;
+
+// Get property or property Description
 - (objc_property_t) getPropertyFromObject:(id)object withParameter:(EJSEasyJsonParameterObject *)parameter;
+- (NSPropertyDescription *)getPropertyDescriptionFromManagedObject:(NSManagedObject *)managedObject withParameter:(EJSEasyJsonParameterObject *)parameter;
 
 @end

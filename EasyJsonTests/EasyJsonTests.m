@@ -10,6 +10,9 @@
 #import "EJSEasyJson.h"
 #import <objc/runtime.h>
 
+#import "EJSEasyJsonObject.h"
+#import "EJSEasyJsonParameterObject.h"
+
 @interface EasyJsonTests : XCTestCase
 
 @end
@@ -40,13 +43,14 @@
             // Manage object
             if (class_getSuperclass(mockClass) == [NSManagedObject class])
             {
-                NSManagedObject *managedObject = [[EJSEasyJson sharedInstance] analyzeDictionary:mock forClass:NSClassFromString([json objectForKey:@"class"])];
+                NSManagedObject *managedObject = [[EJSEasyJson sharedInstance] analyzeDictionary:mock forClass:mockClass];
                 [self analyzeManagedObject:managedObject];
             }
             // NSobject
             else
             {
-                
+                NSObject *customObject = [[EJSEasyJson sharedInstance] analyzeDictionary:mock forClass:mockClass];
+                [self analyseObject:customObject];
             }
         }
         else if ([mock isKindOfClass:[NSArray class]]) {
@@ -54,14 +58,17 @@
             // Managed object
             if (class_getSuperclass(mockClass) == [NSManagedObject class])
             {
-                NSArray *managedObjects = [[EJSEasyJson sharedInstance] analyzeArray:mock forClass:NSClassFromString([json objectForKey:@"class"])];
+                NSArray *managedObjects = [[EJSEasyJson sharedInstance] analyzeArray:mock forClass:mockClass];
                 for (NSManagedObject *managedObject in managedObjects) {
                     [self analyzeManagedObject:managedObject];
                 }
-            }
+            } else
             // NSobject
             {
-                
+                NSArray *customObjects = [[EJSEasyJson sharedInstance] analyzeArray:mock forClass:mockClass];
+                for (id object in customObjects) {
+                    [self analyseObject:object];
+                }
             }
         }
     }
@@ -70,14 +77,39 @@
 
 - (void)analyzeManagedObject:(NSManagedObject *)managedObject
 {
-    for (NSString *attributeKey in [[[managedObject entity] attributesByName] allKeys]) {
-        id result = [managedObject valueForKey:attributeKey];
-        XCTAssertNotNil(result, @"Check attributeKey : %@", attributeKey);
+    EJSEasyJsonObject *configObject = [[EJSEasyJson sharedInstance] getConfigForClass:NSStringFromClass([managedObject class])];
+    for (EJSEasyJsonParameterObject *parameter in configObject.parameters) {
+        NSPropertyDescription *propertyDescription = [[EJSEasyJson sharedInstance] getPropertyDescriptionFromManagedObject:managedObject withParameter:parameter];
+        if ((propertyDescription) && ([propertyDescription isKindOfClass:[NSAttributeDescription class]])) {
+            id result = [managedObject valueForKey:parameter.attribute];
+            XCTAssertNotNil(result, @"Check attributeKey : %@", parameter.attribute);
+        } else if ((propertyDescription) && ([propertyDescription isKindOfClass:[NSRelationshipDescription class]])) {
+            NSSet *results = [managedObject valueForKey:parameter.attribute];
+            XCTAssert(results.count > 0, @"Check relation : %@", parameter.attribute);
+        }
     }
-    
-    for (NSString *relationKey in [[[managedObject entity] relationshipsByName] allKeys]) {
-        NSSet *results = [managedObject valueForKey:relationKey];
-        XCTAssert(results.count > 0, @"Check relation : %@", relationKey);
+}
+
+- (void)analyseObject:(id)object
+{
+    EJSEasyJsonObject *configObject = [[EJSEasyJson sharedInstance] getConfigForClass:NSStringFromClass([object class])];
+    for (EJSEasyJsonParameterObject *parameter in configObject.parameters) {
+        objc_property_t property = [[EJSEasyJson sharedInstance] getPropertyFromObject:object withParameter:parameter];
+        if (property) {
+            const char *propertyType = property_getAttributes(property);
+            
+            id value = [object valueForKey:parameter.attribute];
+            
+            if ([value isKindOfClass:[NSArray class]]) {
+                XCTAssert(((NSArray *)value).count > 0, @"Check Array : %@", parameter.attribute);
+            } else if ([value isKindOfClass:[NSDictionary class]]) {
+                XCTAssert(((NSDictionary *)value).count > 0, @"Check Dictionary : %@", parameter.attribute);
+            } else if((value != nil) && (propertyType[1] == '@')) { // String
+                XCTAssertNotNil(value, @"Check String : %@", parameter.attribute);
+            } else if ([value isKindOfClass:[NSNumber class]]) { // Number or primitive
+                XCTAssertNotNil(value, @"Check Number : %@", parameter.attribute);
+            }
+        }
     }
 }
 

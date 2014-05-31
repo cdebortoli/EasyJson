@@ -34,7 +34,10 @@
             [jsonDict setValue:value forKey:parameter.jsonKey];
         }
     }
-    return jsonDict;
-}
+    
+    #if (EASY_JSON_ENVELOPE_WITH_OBJECT_NAME)
+        return @{configObject.classInfo.attribute: jsonDict};
+    #endif
+    return jsonDict;}
 
 @end

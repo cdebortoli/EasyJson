@@ -33,7 +33,7 @@
     
     EJSCustomObject *customObject = [[EJSEasyJson sharedInstance] analyzeDictionary:[self loadService:@"customObjectJson"] forClass:[EJSCustomObject class]];
 //    NSLog(@"%@", customObject);
-    [customObject getJsonDictionary];
+    NSDictionary *dictCustomObject = [customObject getJsonDictionary];
 
 }
 

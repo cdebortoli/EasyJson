@@ -76,9 +76,10 @@ static EJSEasyJson __strong *sharedInstance = nil;
     
     // 2 - JSON values
     NSDictionary *jsonFormatedDictionary = jsonDictionary;
-    if (EASY_JSON_ENVELOPE_WITH_OBJECT_NAME)
+    #if (EASY_JSON_ENVELOPE_WITH_OBJECT_NAME)
         jsonFormatedDictionary = [jsonDictionary objectForKey:configObject.classInfo.jsonKey];
-    
+    #endif
+
     // 3 - NSManagedobject
     if (class_getSuperclass(objectClass) == [NSManagedObject class])
     {

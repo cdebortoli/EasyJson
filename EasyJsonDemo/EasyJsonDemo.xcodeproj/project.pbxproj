@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		4800A00B193A436900911B44 /* EasyJsonMockCustomObjects.json in Resources */ = {isa = PBXBuildFile; fileRef = 4800A00A193A436900911B44 /* EasyJsonMockCustomObjects.json */; };
 		48050107193782310089E36A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48050106193782310089E36A /* Foundation.framework */; };
 		48050109193782310089E36A /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 48050108193782310089E36A /* CoreGraphics.framework */; };
 		4805010B193782310089E36A /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4805010A193782310089E36A /* UIKit.framework */; };
@@ -65,6 +66,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		4800A00A193A436900911B44 /* EasyJsonMockCustomObjects.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = EasyJsonMockCustomObjects.json; sourceTree = "<group>"; };
 		48050103193782310089E36A /* EasyJsonDemo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EasyJsonDemo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		48050106193782310089E36A /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		48050108193782310089E36A /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -264,6 +266,7 @@
 				48050169193783E60089E36A /* EasyJsonMockAircraft.json */,
 				4805016A193783E60089E36A /* EasyJsonMockAircraftWithEnvelope.json */,
 				48FCFE701939EC91006E9C51 /* EasyJsonMockCustomObject.json */,
+				4800A00A193A436900911B44 /* EasyJsonMockCustomObjects.json */,
 			);
 			name = Mock;
 			path = ../EasyJsonDemo;
@@ -382,6 +385,7 @@
 				48FCFE721939EDED006E9C51 /* EasyJsonMockAircraft.json in Resources */,
 				48FCFE731939EDED006E9C51 /* EasyJsonMockAircraftWithEnvelope.json in Resources */,
 				48050130193782310089E36A /* InfoPlist.strings in Resources */,
+				4800A00B193A436900911B44 /* EasyJsonMockCustomObjects.json in Resources */,
 				48FCFE6F1939E082006E9C51 /* EasyJsonConfig.json.tpl in Resources */,
 				48FCFE711939EC91006E9C51 /* EasyJsonMockCustomObject.json in Resources */,
 			);
